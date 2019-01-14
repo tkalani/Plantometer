@@ -1,0 +1,67 @@
+.select-plant {
+    background: transparent;
+    font-size: 18px;
+    border: none;
+    height: 20px;
+    width: 90px;
+    background-color: #4CAF50;
+    color: #fff;
+}
+.weather {
+    background-image: url('../images/rain.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-transition: background-image 2s;
+    transition: background-image 2s;
+}
+#actuatorstatus {
+    background-image: url('../images/runningtap.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-transition: background-image 2s;
+    transition: background-image 2s;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 90px;
+    height: 44px;
+}
+.switch input {
+    display: none;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 36px;
+    width: 40px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: #2196F3;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(42px);
+    -ms-transform: translateX(42px);
+    transform: translateX(42px);
+}

@@ -1,0 +1,116 @@
+{% extends 'sensors/main.html' %} {% block head %}{% load staticfiles %}
+<link href="{% static '/sensors/css/jquery.circliful.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static '/sensors/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="{% static '/sensors/css/overview.css' %}" rel="stylesheet" type="text/css" />
+
+<script src="http://code.jquery.com/jquery-1.4.min.js"></script>
+<script src="{% static '/sensors/js/jquery.circliful.js' %}"></script>
+<script src="{% static '/sensors/js/Rx.min.js' %}"></script>
+<script>
+	let pid = JSON.parse('{{userdata.currentplant}}');
+	let runningtapurl = "{% static 'sensors/images/runningtap.svg' %}";
+	let stoppedtapurl = "{% static 'sensors/images/stoppedtap.svg' %}";
+	let sunnypngurl = "{% static 'sensors/images/sunny.png' %}";
+	let rainypngurl = "{% static 'sensors/images/rain.png' %}";
+	let link = "{% url 'users:actuatorcontrol' %}";
+
+</script>
+<script src="{% static 'sensors/js/overview.js' %}"></script> {% endblock %} {% block body %} {% block main %} {% block mydashboard %}
+
+<header class="w3-container" style="padding-top:22px">
+	<h5>
+		<b>
+			<i class="fa fa-dashboard"></i> My Dashboard</b>
+	</h5>
+</header>
+{% endblock %}
+<div class="w3-row-padding">
+	<div class="w3-col s9" style="height: 88vh;">
+
+		<div class="w3-row-padding w3-margin-bottom" style="margin-top:10px;">
+			<div class="w3-col s4">
+				<div class="w3-container w3-green w3-padding-16" style="height: 150px; min-width: 150px;">
+					<div class="w3-left" style="margin-top: 3px;">
+						<i class="fa fa-check-square-o w3-xxxlarge"></i>
+					</div>
+					<div class="w3-clear"></div>
+					<div style="flex: 0 0 50%; display: inline-block;">
+						<h5>Current Plant- </h5>
+					</div>
+					<div style="flex: 1; display: inline-block;">
+						<form name="myform1" role="form" action="{% url 'sensors:setplant' %}" method="post" class="register-form">
+							{% csrf_token %}
+							<select class="select-plant" name="currentplant" onchange="this.form.submit()">
+								{% for name in plant_names %} {% if userdata.currentplant == name.id %}
+								<option value="{{name.id}}" selected>{{name}}</option>
+								{% else %}
+								<option value="{{name.id}}">{{name}}</option>
+								{% endif %} {% endfor %}
+							</select>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="w3-col s4">
+				<div class="w3-container w3-padding-16 w3-blue" align="center" style="height: 150px; min-width: 150px;">
+					<i class="fa fa-clock-o fa-3x" aria-hidden="true"></i>
+					<div style="margin-top: 10px"></div>
+					<div id="date"></div>
+					<div id="time"></div>
+				</div>
+			</div>
+
+			<div class="w3-col s4">
+				<div class="weather w3-container w3-padding-16" align="center" style="height: 240px; min-width: 240px;"></div>
+			</div>
+		</div>
+
+		<div style="margin-top: 30px;">
+			<!-- <i class="fa fa-thermometer-empty" aria-hidden="true"></i> -->
+			<h4 style="text-align: center;">Latest Sensor Readings</h4>
+			<div style="margin-top: 20px;"></div>
+
+			<div>
+				<div id="humidity"></div>
+			</div>
+			<div style="padding-left:25%;">
+				<div id="soilmoist"></div>
+			</div>
+			<div style="padding-left:50%;">
+				<div id="temp"></div>
+			</div>
+			<div style="padding-left:75%;">
+				<div id="level"></div>
+			</div>
+		</div>
+	</div>
+	<div class="w3-col s3 w3-border-left w3-border-black" style="height: 88vh; text-align: center; font-weight: bold;">
+
+
+		<h4 style="">Actuator Status and Control (Raspberry PI)</h4>
+
+		<div id="block1" style="opacity: 1; position: absolute; width: 24%;">
+			<div id="actuatorstatus" style="margin-top: 90px; height: 200px;"></div>
+			<div style="margin-top: 50px;">
+
+				<div id="block2" style="opacity: 1; position: absolute;">
+					<p style="font-size: 14px;">Use the below button to control the actuator manually.</p>
+					<label class="switch" style="margin-top: 20px;">
+						<input id="actuatorcontrol" name="actuatorcontrol" type="checkbox" onclick="actuator_control()">
+						<span class="slider"></span>
+					</label>
+				</div>
+				<div id="err2" style="display: none; margin-top: 58px; color: red; font-size: 15px; z-index: 3; position: absolute;">
+					Actuator has been set to automatic control. Change to manual control in settings.
+				</div>
+			</div>
+		</div>
+		<div id="err1" style="display: none; margin-top: 170px; color: red; font-size: 15px; z-index: 3; position: absolute;">
+			Please update the actuator link in your plant settings to control the actuator
+		</div>
+	</div>
+
+</div>
+{% endblock %} {% endblock %} {% block script %} {% endblock %}

@@ -1,0 +1,495 @@
+{% extends 'sensors/main.html' %} {% block head %}{% load staticfiles %}
+<link href="{% static '/sensors/css/jquery.circliful.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static '/sensors/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="http://code.jquery.com/jquery-1.4.min.js"></script>
+<script src="{% static '/sensors/js/jquery.circliful.js' %}"></script>
+<script src="{% static '/sensors/js/Rx.min.js' %}"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js" type="text/javascript"></script>
+<style>
+    .row {
+        display: flex;
+    }
+
+    .col {
+        flex: 1;
+    }
+</style>
+{% endblock %} {% block body %} {% block main %} {% block mydashboard %} {% endblock %}
+<center>
+    <div style="padding-left: 15px; width:90%;" class="w3-row-padding w3-margin-bottom">
+        <div id="tabs" style="margin-top: 25px;">
+            <ul>
+                <li>
+                    <a href="#tabs-1">Temperature</a>
+                </li>
+                <li>
+                    <a href="#tabs-2">Soil Moisture</a>
+                </li>
+                <li>
+                    <a href="#tabs-3">Water Level</a>
+                </li>
+                <li>
+                    <a href="#tabs-4">Humidity</a>
+                </li>
+            </ul>
+            <br>
+            <div class="row">
+                    <div>
+                        <select name="currentplant" onchange="fun1();" id="plant_dropdown" style="width: 150px; height: 22px;">
+                            {% for name in plant_names %} {% if userdata.currentplant == name.id %}
+                            <option value="{{name.id}}" selected>{{name}}</option>
+                            {% else %}
+                            <option value="{{name.id}}">{{name}}</option>
+                            {% endif %} {% endfor %}
+                        </select>
+                    </div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div>
+                        <select name="date_filter" id="date_dropdown" onchange="change_data_date()" style="width: 150px; height: 22px;">
+                            <option value="1" selected>Latest</option>
+                            <option value="2">Last 1 Week</option>
+                            <option value="3">Last 2 Weeks</option>
+                            <option value="4">Last 30 days</option>
+                        </select>
+                    </div>
+                </div>
+            <div id="tabs-1">
+                <div class="container1">
+                    <div style="height: 500px; width: 900px;" id="con1">
+                        <canvas id="tempgraph" style="max-height: 50px, max-width: 50px !important;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div id="tabs-2">
+                <div class="container2">
+                    <div style="height: 500px; width: 900px;" id="con2">
+                        <canvas id="soilmoistgraph" style="height: 50px, width: 50px !important;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div id="tabs-3">
+                <div class="container3">
+                    <div style="height: 500px; width: 900px;" id="con3">
+                        <canvas id="levelgraph" style="height: 50px, width: 50px !important;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tabs-4">
+                <div class="container4">
+                    <div style="height: 500px; width: 900px;" id="con4">
+                        <canvas id="humiditygraph" style="height: 50px, width: 50px !important;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</center>
+{% endblock %} {% endblock %} {% block script %}
+<script>
+    $("#tabs").tabs();
+
+    function change_data_date() {
+        var val = document.getElementById('date_dropdown').value;
+        console.log(val);
+        if (val == 1)
+            fun1();
+        else
+            load_data_by_date(val);
+    }
+
+    function load_data_by_date(val) {
+
+        $('#tempgraph').remove();
+        $('#soilmoistgraph').remove();
+        $('#levelgraph').remove();
+        $('#humiditygraph').remove();
+
+        $('#con1').append('<canvas id="tempgraph"><canvas>');
+        $('#con2').append('<canvas id="soilmoistgraph"><canvas>');
+        $('#con3').append('<canvas id="levelgraph"><canvas>');
+        $('#con4').append('<canvas id="humiditygraph"><canvas>');
+
+        var ctx1 = document.querySelector("#tempgraph").getContext('2d');
+        var ctx2 = document.querySelector("#soilmoistgraph").getContext('2d');
+        var ctx3 = document.querySelector("#levelgraph").getContext('2d');
+        var ctx4 = document.querySelector("#humiditygraph").getContext('2d');
+
+
+        pid = document.getElementById("plant_dropdown").value;
+        console.log(pid);
+        $.ajax({
+            url: "/sensors/databydate/",
+            type: "POST",
+            dataType: 'json',
+            data: { 'pid': pid, 'option': val, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+            success: data => {
+
+                console.log(data);
+                var myChart1 = new Chart(ctx1, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Temperature in Celcius',
+                            data: data.temp,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(251, 220, 19, 0.4)",
+                            borderColor: "rgba(251, 220, 19, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Soil Moisture in % ',
+                            data: data.soilmoist,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(161, 100, 2, 0.4)",
+                            borderColor: "rgba(161, 100, 2, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart3 = new Chart(ctx3, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Water Level in Litres',
+                            data: data.distance,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(4, 160, 251, 0.4)",
+                            borderColor: "rgba(4, 160, 251, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart4 = new Chart(ctx4, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Humidity in % ',
+                            data: data.humidity,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(142, 129, 253, 0.4)",
+                            borderColor: "rgba(42, 129, 253, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function fun1() {
+        var ctx1 = document.querySelector("#tempgraph").getContext('2d');
+        var ctx2 = document.querySelector("#soilmoistgraph").getContext('2d');
+        var ctx3 = document.querySelector("#levelgraph").getContext('2d');
+        var ctx4 = document.querySelector("#humiditygraph").getContext('2d');
+
+        document.getElementById('date_dropdown').value = 1;
+
+        pid = document.getElementById("plant_dropdown").value;
+        $.ajax({
+            url: "/sensors/pdetail/",
+            type: "POST",
+            dataType: 'json',
+            data: { 'pid': pid, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+            success: data => {
+
+                var myChart1 = new Chart(ctx1, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Temperature in Celcius',
+                            data: data.temp,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(251, 220, 19, 0.4)",
+                            borderColor: "rgba(251, 220, 19, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Soil Moisture in % ',
+                            data: data.soilmoist,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(161, 100, 2, 0.4)",
+                            borderColor: "rgba(161, 100, 2, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart3 = new Chart(ctx3, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Water Level in Litres',
+                            data: data.distance,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(4, 160, 251, 0.4)",
+                            borderColor: "rgba(4, 160, 251, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+                var myChart4 = new Chart(ctx4, {
+                    type: 'line',
+                    responsive: false,
+                    width: 100,
+                    height: 100,
+                    data: {
+
+                        labels: data.date,
+                        datasets: [{
+                            label: 'Humidity in % ',
+                            data: data.humidity,
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(142, 129, 253, 0.4)",
+                            borderColor: "rgba(42, 129, 253, 1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(242,34,34,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(242,34,34,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    $(function () {
+        fun1();
+    });
+
+</script> {% endblock %}

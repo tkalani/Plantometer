@@ -1,0 +1,482 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">{% load staticfiles %}
+	<title>Plant-o-Meter</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link href="{% static 'users/css/bootstrap-responsive.css' %}" rel="stylesheet">
+	<link href="{% static 'users/css/style.css' %}" rel="stylesheet">
+	<link href="{% static 'users/color/default.css' %}" rel="stylesheet">
+
+	<link rel="shortcut icon" href="{% static 'users/img/logo-image.png' %}">
+	<link rel="stylesheet" href="{% static 'users/css/theme.css' %}" type="text/css">
+</head>
+
+<body>
+	<!-- navbar -->
+	<div class="navbar-wrapper">
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<!-- Responsive navbar -->
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+					</a>
+					<h1 class="brand"><a title="Plant-o-meter" href="{% url 'users:homepage' %}">Plant-o-Meter</a></h1>
+					<!-- navigation -->
+					<nav class="pull-right nav-collapse collapse">
+						<ul id="menu-main" class="nav">
+							<li><a title="about" href="#about">About</a></li>
+							<li><a title="services" href="#services">Features</a></li>
+							<li><a title="team" href="#works">Team</a></li>
+							<li><a title="contact" href="#contact">Contact</a></li>
+							<li><a href="{% url 'users:login' %}">Login</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--div class="modal fade" id="login" role="style">
+		<div class="modal-dialog">
+			<div class="modal-content login-modal-size">
+				<div class="modal-header login-modal-title">
+					Log In<span class="glyphicon glyphicon-remove modal-dismiss" data-dismiss="modal"></span>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<label for="contact-name" class="col-lg-3 col-lg-offset-1 control-label"></label>
+						<div class="col-lg-10 col-lg-offset-1">
+							<input type="number" name="" class="form-control" placeholder="Phone no. ">
+						</div>
+					</div>
+
+					<div class="row">
+						<label for="Password" class="col-lg-3  col-lg-offset-1 control-label"></label>
+						<div class="col-lg-10 col-lg-offset-1">
+							<input type="password" class="form-control" name="password" placeholder="Password">
+						</div>
+					</div>
+
+					<div class="row">
+						<span class="remember-me" style=""><input type="checkbox" name="">&nbsp;Remember Me </span>
+						<a href="#forget-password" data-toggle="modal"><span class="forget-password">Forget Password ?</span></a>
+
+					</div>
+					<div class="row">
+						<div class="col-lg-9 col-lg-offset-3" style="padding-top: 10px;">
+							<button name="Signup" class="btn btn-default login-modal-button" style="background-color: #ff3366;margin-top: 2em"><span style="font-size: 0.9em"> LOGIN </span></button>
+							<p class="login-modal-text" style="margin-top: 1em;">OR</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-9 col-lg-offset-3" style="padding-top: 10px;">
+							<button name="Sighup" class="btn btn-default login-modal-button" style="background-color: #2f5894;margin-top: -.2em;margin-bottom: 2em;"><span style="font-size: .9em; color:white;"> SIGNUP </span></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div-->
+
+	<!-- Header area -->
+	<div id="header-wrapper" class="header-slider">
+		<header class="clearfix">
+			<div class="logo">
+				<img src="{% static 'users/img/logo-image.png' %}" alt="" height="300" width="300" />
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="span12">
+						<div id="main-flexslider" class="flexslider">
+							<ul class="slides">
+								<li>
+									<p class="home-slide-content" style="color:black">
+										<strong>ONE STEP</strong> SOLUTION
+									</p>
+								</li>
+								<li>
+									<p class="home-slide-content" style="color:black">
+										PLANT MANAGEMENT<strong> A CLICK AWAY</strong>
+									</p>
+								</li>
+								<li>
+									<p class="home-slide-content" style="color:black">
+										SAVE TIME,<strong> SIT BACK AND RELAX</strong>
+									</p>
+								</li>
+							</ul>
+						</div>
+						<!-- end slider -->
+					</div>
+				</div>
+			</div>
+		</header>
+	</div>
+	<!-- spacer section -->
+	<section class="spacer green">
+		<div class="container">
+			<div class="row">
+				<div class="span6 alignright flyLeft">
+					<blockquote class="large" style="color:black">
+						Connect your garden to give your plants a voice.Feed information about your plant and its growing environment to your phone.
+					</blockquote>
+				</div>
+				<div class="span6 aligncenter flyRight">
+					<img src="{% static 'users/img/cover.jpg' %}">
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- end spacer section -->
+	<div class="container">
+		<section id="about" class="the-app clearfix">
+			<div class="digital-intelligence-wrap clearfix">
+				<div class="container">
+					<div class="section-title">
+						<h1>About the Product</h1>
+						<p>
+							<center>Our product promises you to feed information about your plant and its growing environment 
+									to your phone. Our goal is to help you become a better gardener by monitoring your plant's
+									vitals, like moisture levels and sunlight, giving you care advice, and letting you know when
+									something is wrong.
+							</center>
+						</p>
+					</div>
+					<div class="digi-intelligence-block clearfix">
+						<div class="digi-column digi-column1">
+							<i></i>
+							<div class="digi-rightcontent">
+								<h5 class="semi">An IoT based solution</h5>
+								<p>Efficient use of IoT devices ; sensors and actuators</p>
+							</div>
+						</div>
+						<div class="digi-column digi-column2">
+							<div class="digi-rightcontent">
+								<h5 class="semi">Multidunal benefits</h5>
+								<p>Go for vacations without thinking about your plants health.</p>
+							</div>
+							<i></i>
+						</div>
+						<div class="digi-column digi-column3">
+							<i></i>
+							<div class="digi-rightcontent">
+								<h5 class="semi">A one stop solution</h5>
+								<p>Manage water resources and even analyse soil health periodically</p>
+							</div>
+						</div>
+						<div class="digi-column digi-column4">
+							<div class="digi-rightcontent">
+								<h5 class="semi">Get SMS Alerts</h5>
+								<p> Get alerts when resources are scarce or a plant is dying.
+								</p>
+							</div>
+							<i></i>
+						</div>
+						<div class="digi-column digi-column5">
+							<i></i>
+							<div class="digi-rightcontent">
+								<h5 class="semi">CLOUD BASED APPLICATION</h5>
+								<p> Visibility on every scheduled process and Real-time reports.</p>
+							</div>
+						</div>
+						<div class="digi-column digi-column6">
+							<div class="digi-rightcontent">
+								<h5 class="semi">Web-app </h5>
+								<p>user-friendly interface with detailed analysis for every registered user.Add as many plants you want </p>
+							</div>
+							<i></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	<!-- end section: team -->
+	<!-- section: services -->
+	<section id="services" class="section orange" style="background-color: #FFE333 ">
+		<div class="container" style="background-color: #FFE333 ">
+			<h4>Features</h4>
+			<!-- Four columns -->
+			<div class="row">
+				<div class="span3 animated-fast flyIn">
+					<div class="service-box">
+						<img src="{% static 'users/img/icons/laptop.png' %}" alt="" />
+						<h2 style="color:red">Monitor plant health</h2>
+						<p style="color:black"><b>
+						 Through the web app as well as android app monitor the water consumption and soil condition over a period of days for a given plant
+					</b></p>
+					</div>
+				</div>
+				<div class="span3 animated flyIn">
+					<div class="service-box">
+						<img src="{% static 'users/img/icons/lab.png' %}" alt="" />
+						<h2 style="color:brown">Control remotely</h2>
+						<p style="color:black"><b>
+						 Get notified when the plant needs water and choose between manual ans auto mode. 
+					</b></p>
+					</div>
+				</div>
+				<div class="span3 animated-fast flyIn">
+					<div class="service-box">
+						<img src="{% static 'users/img/icons/camera.png' %}" alt="" />
+						<b><h2 style="color:black">Analyse and react</h2></b>
+						<p style="color:black"><b>
+						 You can see the plant condition over a given period of time and observe the soil and environment conditions , the water requiremnent  and accordingly plan the addition of new water resources.
+					</b></p>
+					</div>
+				</div>
+				<div class="span3 animated-slow flyIn">
+					<div class="service-box">
+						<img src="{% static 'users/img/icons/basket.png' %}" alt="" />
+						<h2 style="color:black">Manage Resources</h2>
+						<p style="color:black"><b>
+						 Be it water resources or soil condition manage it all with just a click.
+					</b></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- end section: services -->
+	<!-- spacer section -->
+	<section class="spacer bg3">
+		<div class="container">
+			<div class="row">
+				<div class="span12 aligncenter flyLeft">
+					<blockquote class="large">
+						A garden requires patient labor and attention. They thrive because someone expended effort on them.Let that someone be us!
+					</blockquote>
+				</div>
+				<div class="span12 aligncenter flyRight">
+					<i class="icon-10x">
+			<img src="{% static 'users/img\bg\1.png' %}"></i>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="works" class="section enhance" style="background-color:#D3D3D3"><!-- style="background-image:url({% static 'users/img/bg/01.jpg' %})"-->
+		<h1 style="margin-top:-50px;text-align: center;">MEET OUR TEAM</h1>
+		<div class="enhance"> <!--style="background-image:url({% static 'users/img/bg/01.jpg' %})"-->
+			
+			<div class="row">
+				<!--div class="span4 offset1">
+					<div>
+						<h2>We aim at <strong>developing products to serve the nature</strong></h2>
+						
+					</div>
+				</div-->
+				<h6 style="font-size:18px;">
+					<center>
+					We work as a team to deliver end products by testing them before reaching the masses.Our products promises superlative perfomance once you start using it.<br>At <i>Plant-o-meter</i> we strive to deliver the best of our possibility.
+					</center>
+				</h6>
+				<!--div class="span8 offset1">
+					<div class="alignright">
+						<p style="color:#4B0082 ; font-size:22px;"><b>
+						We work as a team to deliver end products by testing them before reaching the masses.Our products promises
+						superlative perfomance once you start using it.At <u><i>Plant-o-meter</i></u> we strive<br> to deliver the best of our possibility.
+					</b></p>
+					</div>
+				</div-->
+			</div>
+			<div class="row">
+				<div class="span2 offset2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-1.jpg' %}" alt="" />
+						<h3>SIDDHANT </h3>
+
+					</div>
+				</div>
+				<div class="span2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-2.jpg' %}" alt="" />
+						<h3>LAISHA</h3>
+					</div>
+				</div>
+				<div class="span2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-5.jpg' %}" alt="" />
+						<h3>SANYEM</h3>
+
+					</div>
+				</div>
+				<div class="span2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-3.jpg' %}" alt="" />
+						<h3>TANMAY</h3>
+
+					</div>
+				</div>
+				<div class="span2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-4.jpg' %}" alt="" />
+						<h3>BHAVI</h3>
+
+					</div>
+				</div>
+
+				<div class="span2 flyIn">
+					<div class="people">
+						<img class="team-thumb img-circle" src="{% static 'users/img/team/img-6.jpg' %}" alt="" />
+						<h3>ITI</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- /.container -->
+	<!-- section: contact -->
+	<section id="contact" class="section green">
+		<div class="container">
+			<h4>Get in Touch</h4>
+			<p><b>
+				For any further reference please contact us.
+			</b></p>
+			<div class="blankdivider30">
+			</div>
+			<div class="row">
+				<div class="span12">
+					<div class="cform" id="contact-form">
+						<div id="sendmessage">Your message has been sent. Thank you!</div>
+						<div id="errormessage"></div>
+						<form action="" method="post" role="form" class="contactForm">
+							<div class="row">
+								<div class="span6">
+									<div class="field your-name form-group">
+										<input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars"
+										/>
+										<div class="validation"></div>
+									</div>
+									<div class="field your-email form-group">
+										<input type="text" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email"
+										/>
+										<div class="validation"></div>
+									</div>
+									<div class="field subject form-group">
+										<input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject"
+										/>
+										<div class="validation"></div>
+									</div>
+								</div>
+								<div class="span6">
+									<div class="field message form-group">
+										<textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
+										<div class="validation"></div>
+									</div>
+									<input type="submit" value="Send message" class="btn btn-theme pull-left">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- ./span12 -->
+			</div>
+		</div>
+	</section>
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="span6 offset3">
+					<ul class="social-networks">
+						<li><a href="#"><i class="icon-circled icon-bgdark icon-instagram icon-2x"></i></a></li>
+						<li><a href="#"><i class="icon-circled icon-bgdark icon-twitter icon-2x"></i></a></li>
+						<li><a href="#"><i class="icon-circled icon-bgdark icon-dribbble icon-2x"></i></a></li>
+						<li><a href="#"><i class="icon-circled icon-bgdark icon-pinterest icon-2x"></i></a></li>
+					</ul>
+					<p class="copyright">
+						Plant-o-meter@copyrights
+						<div class="credits">
+							<!-- footer text -->
+						</div>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- ./container -->
+	</footer>
+	<a href="#" class="scrollup"><i class="icon-angle-up icon-square icon-bgdark icon-2x"></i></a>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="{% static 'users/js/jquery.js' %}"></script>
+	<script src="{% static 'users/js/jquery.scrollTo.js' %}"></script>
+	<script src="{% static 'users/js/jquery.nav.js' %}"></script>
+	<script src="{% static 'users/js/jquery.localscroll-1.2.7-min.js' %}"></script>
+	<script src="{% static 'users/js/bootstrap.js' %}"></script>
+	<script src="{% static 'users/js/jquery.prettyPhoto.js' %}"></script>
+	<script src="{% static 'users/js/isotope.js' %}"></script>
+	<script src="{% static 'users/js/jquery.flexslider.js' %}"></script>
+	<script src="{% static 'users/js/inview.js' %}"></script>
+	<script src="{% static 'users/js/animate.js' %}"></script>
+	<script src="{% static 'users/js/custom.js' %}"></script>
+	<script src="{% static 'users/contactform/contactform.js' %}"></script>
+
+</body>
+<style>
+	.banner {
+		background-image: url({% static 'users/img/soil-dirt-plant-735-350.jpg' %});
+	}
+	.enhance {
+		background-repeat: repeat-n;
+	}
+
+	.modal-dismiss {
+		font-size: .8em;
+		color: #ccc;
+		float: right;
+		cursor: pointer;
+	}
+
+	.login-modal-size {
+		margin-top: 5em;
+		width: 60%;
+		margin-left: 15%;
+	}
+
+	.login-modal-title {
+		color: #333;
+		font-size: 1.2em;
+		text-align: center;
+	}
+
+	.remember-me {
+		font-size: .8em;
+		float: left;
+		margin-left: 12%;
+		margin-top: 5px;
+		color: #c4c4c4;
+	}
+
+	.forget-password {
+		font-size: .8em;
+		float: right;
+		margin-right: 12%;
+		color: #c4c4c4;
+		margin-top: 5px;
+	}
+
+	.login-modal-button {
+		border-radius: 25px;
+		text-align: center;
+		height: 2.5em;
+		width: 70%;
+		color: #fff;
+		letter-spacing: 2px;
+		border: none;
+	}
+
+	.login-modal-text {
+		color: #999;
+		font-size: .7em;
+		text-align: center;
+		margin-left: -30%;
+		border: none;
+	}
+</style>
+
+</html>

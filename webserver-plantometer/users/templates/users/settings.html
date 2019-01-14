@@ -1,0 +1,832 @@
+{% extends 'sensors/main.html' %} {% block head %}{% load staticfiles %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<style>
+	table.table1 {
+		border-bottom-style: solid;
+		border-bottom-width: 2px;
+		border-top-style: solid;
+		border-top-width: 2px;
+	}
+
+	.blocks {}
+
+	.highlighted {
+		background-color: #D3D3D3;
+	}
+
+	a:link {
+		text-decoration: none;
+	}
+
+	.table1 {
+		width: 80%;
+	}
+
+	.table1 tr th {
+		text-align: left;
+	}
+
+	.table_data1 {
+		text-align: right;
+	}
+
+	.table_data2 {
+		text-align: left;
+		padding-left: 3%;
+	}
+
+	.table_data3 {
+		text-align: left;
+		padding-left: 1%;
+	}
+
+	input[type="checkbox"] {
+		width: 17px;
+		height: 17px;
+		vertical-align: middle;
+	}
+
+	input[type="radio"] {
+		width: 17px;
+		height: 17px;
+		vertical-align: middle;
+
+	}
+</style>
+{% endblock %} {% block body %} {% block main %} {% block mydashboard %} {% endblock %}
+<center>
+	<div class="w3-row-padding" style="">
+		<h5 style="margin-top: 3%; font-weight: bold;">User Account Plant Settings</h5>
+		<table class="table1">
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="show_change_password();">Change Password</a>
+					<div id="changePasswordForm" style="display: none;">
+						<center>
+							<table class="table2" style="width: 100%">
+								<tr>
+									<td width="40%" class="table_data1">Current Password</td>
+									<td width="30%" class="table_data2">
+										<input type="password" id="old_password" required>
+									</td>
+									<td width="30%" class="table_data3">
+										<p id="oldpasswordmatch" style="display: none;">
+											<font color="red" size="1px;">Old Password Didn't Match</font>
+										</p>
+									</td>
+								</tr>
+								<tr>
+									<td width="40%" class="table_data1">New Password</td>
+									<td width="30%" class="table_data2">
+										<input type="password" id="new_password1" required>
+									</td>
+								</tr>
+								<tr>
+									<td width="40%" class="table_data1">New Password Again</td>
+									<td width="30%" class="table_data2">
+										<input type="password" id="new_password2" required>
+									</td>
+									<td width="30%" class="table_data3">
+										<p id="passwordmatch" style="display: none;">
+											<font color="red" size="1px;">New Passwords Don't Match</font>
+										</p>
+									</td>
+								</tr>
+								<tr></tr>
+								<tr>
+									<td width="30%" class="table_data1"></td>
+									<td width="30%" class="table_data2">
+										<br>
+										<button class="w3-button w3-blue w3-border" onclick="change_password()">Change</button>
+										<button class="w3-button w3-border" onclick="cancel_show_change_password();">Cancel</button>
+										<br>
+										<p id="successfully" style="display: none;">
+											<font color="green" size="1px;">Password Changed Successfully</font>
+										</p>
+										<br>
+									</td>
+									<td width="40%" class="table_data3">
+										<br>
+
+										<p id="nullPassword" style="display: none;">
+											<font color="red" size="1px;">Enter Passwords (No Box must be empty)</font>
+										</p>
+										<br>
+									</td>
+								</tr>
+							</table>
+						</center>
+					</div>
+				</th>
+			</tr>
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="open_delete_plants();">Delete Plants</a>
+					<center>
+						<div id="deletePlants" style="display: none;">
+							<table width="100%" class="table2">
+								<tr>
+									<td></td>
+									<td id="delete_plant_list" style="display:none; padding-left:20%"></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td width="30%"></td>
+									<td width="40%" style="text-align: center;">
+										<br>
+										<button class="w3-button w3-blue w3-border" onclick="deleteplants();">Delete</button>
+										<button class="w3-button w3-border" onclick="cancel_open_delete_plants();">Cancel</button>
+									</td>
+									<td width="30%">
+										<div id="numberOfPlantsDeleted"></div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</center>
+				</th>
+			</tr>
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="update_plants();">Update Plants</a>
+					<div id="updatePlants" style="display: none;">
+						<div class="w3-container w3-row" style="height: 525px; margin-top: 1.5%;">
+							<div class="w3-col s3" id="plant_list" style="padding-left: 6%;"></div>
+							<div class="w3-col s9" id="plant_detail" style="display: none;">
+								<input class="w3-input" type="text" name="plant_name" id="plant_name" style="width: 100%;">
+								<input type="hidden" name="plant_location_latitude" id="plant_location_latitude">
+								<input type="hidden" name="plant_location_longitude" id="plant_location_longitude">
+								<div style="margin-top: 1%;"></div>
+								<div id="plant_map" style="height: 470px; width: 100%"></div>
+							</div>
+						</div>
+						<div class="w3-container w3-row" style="margin-top: 2%; padding-right: 1%; height: 70px;">
+							<div class="w3-col s6" style="text-align: right;">
+								<button class="w3-button w3-blue w3-border" onclick="update_plant_details()">Change</button>
+							</div>
+							<div class="w3-col s3" style="text-align: left; padding-left: 1%">
+								<button class="w3-button w3-border" onclick="cancel_update_plants();">Cancel</button>
+							</div>
+							<div id="success_update_plant" class="w3-col s3" style="display: none; text-align: center;">
+								<p>
+									<font size="1px" color="green">Details Updated Successfully</font>
+								</p>
+							</div>
+						</div>
+					</div>
+				</th>
+			</tr>
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="change_username();">Change Username</a>
+					<div id="change_username" style="display: none;">
+						<table width="100%" class="table2">
+							<tr>
+								<td width=40% class="table_data1">
+									Username
+								</td>
+								<td width=30% class="table_data2">
+									<input type="number" name="username" id="new_username">
+								</td>
+								<td width=30% class="table_data3">
+								</td>
+							</tr>
+							<tr>
+								<td width="40%" class="table_data1"></td>
+								<td width="30%" class="table_data2">
+									<br>
+									<button class="w3-button w3-blue w3-border" onclick="change_to_new_username();">Change</button>
+									<button class="w3-button w3-border" onclick="cancel_change_username();">Cancel</button>
+								</td>
+								<td width="30%" class="table_data3">
+									<br>
+									<div id="blank_username" style="display: none;">
+										<font color="red" size="1px">USERNAME can't be empty</font>
+									</div>
+									<div id="short_username" style="display: none;">
+										<font color="red" size="1px">Length of phone no. mustn't be less than 10 digits</font>
+									</div>
+									<div id="username_taken" style="display: none;">`
+										<font color="red" size="1px">Username already taken</font>
+									</div>
+									<div id="username_success" style="display: none;">
+										<font color="green" size="1px">Username Changed Successfully</font>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</th>
+			</tr>
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="change_actuator_control_settings();">Actuator Control</a>
+					<div id="actuator_control_settings" style="display: none;">
+						<div class="w3-container w3-row">
+							<div id="plant_list_actuator" class="w3-col s6" style="padding-left: 30%;">
+							</div>
+							<div class="w3-col s3" style="text-align: left;">
+								<div id="plant_initial_actuator" style="display: none;">
+									<input type="radio" onchange="update_actuator_status(0);" name="plants_actuator_control" id="auto" value="0">&nbsp;Automatic
+									<br>
+									<input type="radio" onchange="update_actuator_status(1);" name="plants_actuator_control" id="man" value="1">&nbsp;Manual
+								</div>
+							</div>
+							<div class="w3-col s3">
+								<p id="success_change_control" style="display: none">
+									<font size="1px" color="green">Actuator Control Changed</font>
+								</p>
+							</div>
+						</div>
+						<div class="w3-container w3-row">
+							<div class="w3-col s12" style="text-align: center; padding-left:1%;">
+								<button class="w3-button w3-border" onclick="cancel_actuator_control_settings();">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</th>
+			</tr>
+			<tr class="blocks">
+				<th>
+					<a href="#" onclick="change_actuator_link_settings();">Actuator Link</a>
+					<div id="actuator_link_settings" style="display: none;">
+						<table width="100%" class="table2">
+							<tr>
+								<td id="plant_list_actuator_link" style="padding-left: 15%"></td>
+								<td id="plant_initial_actuator_link" style="display: none;" colspan="2">
+									<input type="text" id="plant_link" value="" style="width: 130%;">
+								</td>
+							</tr>
+							<tr style="height: 75px;">
+								<td width="30%"></td>
+								<td width="40%" style="padding-left: 5%; text-align: center;">
+									<button class="w3-button w3-blue w3-border" onclick="change_actuator_link()">Change</button>
+									<button class="w3-button w3-border" onclick="cancel_change_actuator_link_settings();">Cancel</button>
+								</td>
+								<td width="30%" style="padding-left: 5%">
+									<p id="success_change_link" style="display: none">
+										<font size="1px" color="green">Actuator Link Changed Successfully</font>
+									</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</th>
+			</tr>
+		</table>
+	</div>
+</center>
+{% endblock %} {% endblock %} {% block script %}
+<script>
+
+	var user_phone;
+
+	var p1 = document.getElementById("old_password");
+	p1.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			change_password();
+		}
+	});
+
+	var p2 = document.getElementById("new_password1");
+	p2.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			change_password();
+		}
+	});
+
+	var p3 = document.getElementById("new_password2");
+	p3.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			change_password();
+		}
+	});
+
+	var p4 = document.getElementById("new_username");
+	p4.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			change_to_new_username();
+		}
+	});
+
+	var p5 = document.getElementById("plant_link");
+	p5.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			change_actuator_link();
+		}
+	});
+
+	var p6 = document.getElementById("plant_name");
+	p6.addEventListener("keydown", function (e) {
+		if (e.keyCode === 13) {
+			update_plant_details();
+		}
+	});
+
+	function open_delete_plants() {
+		document.getElementById('deletePlants').style.display = 'block';
+		document.getElementById('delete_plant_list').style.display = 'block';
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('numberOfPlantsDeleted').style.display = 'none';
+		document.getElementById('new_username').value = user_phone;
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+	}
+
+	function show_change_password() {
+		document.getElementById('changePasswordForm').style.display = 'block';
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+	}
+
+	function update_plants() {
+		document.getElementById('updatePlants').style.display = 'block';
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+	}
+
+	function change_username() {
+		document.getElementById('change_username').style.display = 'block';
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('new_username').value = user_phone;
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+	}
+
+	function change_actuator_control_settings() {
+		document.getElementById('actuator_control_settings').style.display = 'block';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('new_username').value = user_phone;
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+	}
+
+	function change_actuator_link_settings() {
+		document.getElementById('actuator_link_settings').style.display = 'block';
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('new_username').value = user_phone;
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+	}
+
+	function cancel_change_actuator_link_settings() {
+		document.getElementById('success_change_link').style.display = 'none';
+		document.getElementById('actuator_link_settings').style.display = 'none';
+	}
+
+	function cancel_show_change_password() {
+		document.getElementById('changePasswordForm').style.display = 'none';
+		document.getElementById('passwordmatch').style.display = 'none';
+		document.getElementById('nullPassword').style.display = 'none';
+		document.getElementById('oldpasswordmatch').style.display = 'none';
+		document.getElementById('successfully').style.display = 'none';
+	}
+
+	function cancel_open_delete_plants() {
+		document.getElementById('deletePlants').style.display = 'none';
+		document.getElementById('numberOfPlantsDeleted').style.display = 'none';
+	}
+
+	function cancel_update_plants() {
+		document.getElementById('updatePlants').style.display = 'none';
+		document.getElementById('success_update_plant').style.display = 'none';
+	}
+
+	function cancel_change_username() {
+		document.getElementById('change_username').style.display = 'none';
+		document.getElementById('blank_username').style.display = 'none';
+		document.getElementById('short_username').style.display = 'none';
+		document.getElementById('username_success').style.display = 'none';
+		document.getElementById('username_taken').style.display = 'none';
+	}
+
+	function show_detail(pname, lng, lat) {
+
+		document.getElementById('plant_detail').style.display = 'block';
+		document.getElementById('plant_name').value = pname;
+		document.getElementById('plant_location_longitude').value = lng;
+		document.getElementById('plant_location_latitude').value = lat;
+		document.getElementById('success_update_plant').style.display = 'none';
+		initMap(lng, lat);
+	}
+	function cancel_actuator_control_settings() {
+		document.getElementById('actuator_control_settings').style.display = 'none';
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('plant_initial_actuator').style.display = 'none';
+	}
+
+	function update_plant_details() {
+		var plant;
+		$("input[name='updplants']:checked").each(function () {
+			plant = $(this).val();
+		});
+		plantname = document.getElementById('plant_name').value;
+		latitude = document.getElementById('plant_location_latitude').value;
+		longitude = document.getElementById('plant_location_longitude').value;
+		console.log(plant, plantname, latitude, longitude);
+		$.ajax({
+			url: "{% url 'users:changePlantDetails' %}",
+			type: "POST",
+			dataType: 'json',
+			data: { 'pid': plant, 'lat': latitude, 'lng': longitude, 'plantname': plantname, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+			success: data => {
+				console.log('actuator deatils');
+				document.getElementById('success_update_plant').style.display = 'block';
+				findPlants();
+			},
+			error: data => {
+				alert('check data connectivity');
+			}
+		});
+	}
+
+	function change_actuator_link() {
+		var new_link = document.getElementById('plant_link').value;
+		var plant;
+		$("input[name='plants_actuator_link']:checked").each(function () {
+			plant = $(this).val();
+		});
+		console.log(plant, new_link);
+		$.ajax({
+			url: "{% url 'users:changeActuatorLink' %}",
+			type: "POST",
+			dataType: 'json',
+			data: { 'pid': plant, 'link': new_link, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+			success: data => {
+				console.log('actuator link updated');
+				document.getElementById('success_change_link').style.display = 'block';
+				findPlants();
+			},
+			error: data => {
+				alert('check data connectivity');
+			}
+		});
+	}
+
+	function change_to_new_username() {
+		new_user = document.getElementById('new_username').value;
+		if (new_user == null || new_user == "") {
+			document.getElementById('blank_username').style.display = 'block';
+			document.getElementById('short_username').style.display = 'none';
+			document.getElementById('username_taken').style.display = 'none';
+			document.getElementById('username_success').style.display = 'none';
+		}
+		else if (new_user.length < 10) {
+			document.getElementById('short_username').style.display = 'block';
+			document.getElementById('blank_username').style.display = 'none';
+			document.getElementById('username_taken').style.display = 'none';
+			document.getElementById('username_success').style.display = 'none';
+		}
+		else {
+			document.getElementById('short_username').style.display = 'none';
+			document.getElementById('blank_username').style.display = 'none';
+			$.ajax({
+				url: "{% url 'users:changeusername' %}",
+				type: "POST",
+				dataType: 'json',
+				data: { 'new_username': new_user, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+				success: data => {
+					if (data.data == 0) {
+						document.getElementById('username_taken').style.display = 'block';
+						document.getElementById('username_success').style.display = 'none';
+					}
+					else if (data.data == 1) {
+						document.getElementById('username_taken').style.display = 'none';
+						document.getElementById('username_success').style.display = 'block';
+						document.getElementById('new_username').value = new_user;
+						user_phone = new_user;
+					}
+				},
+				error: data => {
+				}
+			});
+		}
+	}
+
+	function change_password() {
+		oldPassword = document.getElementById('old_password').value;
+		newPassword1 = document.getElementById('new_password1').value;
+		newPassword2 = document.getElementById('new_password2').value;
+
+		if (newPassword2 != newPassword1) {
+			document.getElementById('passwordmatch').style.display = 'block';
+			document.getElementById('nullPassword').style.display = 'none';
+			document.getElementById('oldpasswordmatch').style.display = 'none';
+			document.getElementById('successfully').style.display = 'none';
+		}
+		else if (new_password2 == null || new_password1 == null) {
+			document.getElementById('nullPassword').style.display = 'block';
+			document.getElementById('oldpasswordmatch').style.display = 'none';
+			document.getElementById('successfully').style.display = 'none';
+			document.getElementById('passwordmatch').style.display = 'none';
+		}
+		else {
+			$.ajax({
+				url: "{% url 'users:changepassword' %}",
+				type: "POST",
+				dataType: 'json',
+				data: { 'oldPassword': oldPassword, 'newPassword1': newPassword1, 'newPassword2': newPassword2, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+				success: data => {
+					if (data.data == 0) {
+						document.getElementById('oldpasswordmatch').style.display = 'block';
+						document.getElementById('successfully').style.display = 'none';
+						document.getElementById('passwordmatch').style.display = 'none';
+						document.getElementById('nullPassword').style.display = 'none';
+					}
+					else if (data.data == 1) {
+						document.getElementById('successfully').style.display = 'block';
+						document.getElementById('oldpasswordmatch').style.display = 'none';
+						document.getElementById('passwordmatch').style.display = 'none';
+						document.getElementById('nullPassword').style.display = 'none';
+						document.getElementById('old_password').value = null;
+						document.getElementById('new_password1').value = null;
+						document.getElementById('new_password2').value = null;
+					}
+				},
+				error: data => {
+				}
+			});
+		}
+	}
+
+	function show_initial_control(pid, act_ctrl) {
+		document.getElementById('success_change_control').style.display = 'none';
+		document.getElementById('plant_initial_actuator').style.display = 'block';
+		if (act_ctrl == '0')
+			document.getElementById('auto').checked = 'true';
+		else if (act_ctrl == '1')
+			document.getElementById('man').checked = 'true';
+	}
+
+	function update_actuator_status(ctrl) {
+		plant = -1;
+		$("input[name='plants_actuator']:checked").each(function () {
+			plant = $(this).val();
+		});
+		console.log(plant, ctrl);
+		$.ajax({
+			url: "{% url 'users:changeActuatorControl' %}",
+			type: "POST",
+			dataType: 'json',
+			data: { 'pid': plant, 'control': ctrl, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+			success: data => {
+				console.log('actuator status updated');
+				document.getElementById('success_change_control').style.display = 'block';
+				findPlants();
+			},
+			error: data => {
+				alert('check data connectivity');
+			}
+		});
+	}
+
+	function show_initial_link(pid, act_link) {
+		console.log(pid, act_link);
+		document.getElementById('success_change_link').style.display = 'none';
+		document.getElementById('plant_initial_actuator_link').style.display = 'block';
+		document.getElementById('plant_link').value = act_link;
+	}
+
+	function findPlants() {
+		$.ajax({
+			url: "{% url 'users:findplants' %}",
+			type: "POST",
+			dataType: 'json',
+			data: { "csrfmiddlewaretoken": '{{ csrf_token }}' },
+			success: data => {
+				console.log(data.username);
+				user_phone = data.username;
+
+				var dpd = document.getElementById("delete_plant_list");
+				while (dpd.hasChildNodes())
+					dpd.removeChild(dpd.lastChild);
+
+				var lsp = document.getElementById("plant_list_actuator_link");
+				while (lsp.hasChildNodes())
+					lsp.removeChild(lsp.lastChild);
+
+				var upd = document.getElementById("plant_list");
+				while (upd.hasChildNodes())
+					upd.removeChild(upd.lastChild);
+
+				var asp = document.getElementById('plant_list_actuator');
+				while (asp.hasChildNodes())
+					asp.removeChild(asp.lastChild);
+
+				var input, label;
+				for (var i = 0; i < data.count; i++) {
+					(function (i) {
+
+						// delete plant node
+						label = document.createElement("label");
+						input = document.createElement("input");
+						input.type = "checkbox";
+						input.name = "opt[]";
+						input.value = data.pid[i];
+						label.appendChild(input);
+						label.appendChild(document.createTextNode(" " + data.name[i]));
+						label.style.fontSize = "17px";
+						dpd.appendChild(label);
+						dpd.appendChild(document.createElement("br"));
+
+
+						// actuator link node
+						input = document.createElement("input");
+						input.type = "radio";
+						input.name = "plants_actuator_link";
+						input.value = data.pid[i];
+						input.addEventListener('click', function () {
+							show_initial_link(data.pid[i], data.act_link[i]);
+						}, false);
+
+						lsp.appendChild(input);
+						lsp.appendChild(document.createTextNode(" " + data.name[i]));
+						lsp.style.fontSize = "17px";
+						lsp.appendChild(document.createElement("br"));
+
+						//update plant node
+						input = document.createElement("input");
+						input.type = "radio";
+						input.name = "updplants";
+						input.value = data.pid[i];
+						input.addEventListener('click', function () {
+							show_detail(data.name[i], data.lng[i], data.lat[i]);
+						}, false);
+						upd.appendChild(input);
+						upd.appendChild(document.createTextNode(" " + data.name[i]));
+						upd.style.fontSize = "17px";
+						upd.appendChild(document.createElement("br"));
+
+						//actuator control node
+						input = document.createElement("input");
+						input.type = "radio";
+						input.name = "plants_actuator";
+
+						input.value = data.pid[i];
+						input.addEventListener('click', function () {
+							show_initial_control(data.pid[i], data.act_ctrl[i], data.name[i]);
+						}, false);
+						asp.appendChild(input);
+						asp.appendChild(document.createTextNode(" " + data.name[i]));
+						asp.style.fontSize = "17px";
+						asp.appendChild(document.createElement("br"));
+
+
+					}(i));
+				}
+			},
+			error: data => {
+			}
+		});
+	}
+	function delplant(pid, l) {
+		if (l == 1) {
+			$.ajax({
+				url: "{% url 'users:delplant' %}",
+				type: "POST",
+				dataType: 'json',
+				data: { 'pid': pid[0], "csrfmiddlewaretoken": '{{ csrf_token }}' },
+				success: data => {
+				},
+				error: data => {
+				}
+			});
+		}
+		else {
+			for (i = 0; i < pid.length; i++) {
+				console.log(i);
+				$.ajax({
+					url: "{% url 'users:delplant' %}",
+					type: "POST",
+					dataType: 'json',
+					data: { 'pid': pid[i], "csrfmiddlewaretoken": '{{ csrf_token }}' },
+					success: data => {
+					},
+					error: data => {
+					}
+				});
+			}
+		}
+	}
+
+	function deleteplants() {
+		$(document).ready(function () {
+			var pid = []
+			$("input[name='opt[]']:checked").each(function () {
+				pid.push($(this).val());
+			});
+			if (pid.length == 1) {
+				delplant(pid, 1);
+				findPlants();
+				document.getElementById('numberOfPlantsDeleted').innerHTML = '<font color="red">' + 1 + ' Plant Deleted</font><br>';
+			}
+			else if (pid.length == 0) {
+				document.getElementById('numberOfPlantsDeleted').innerHTML = '<font color="red"> Please Select Plants</font><br>';
+			}
+			else {
+				delplant(pid, pid.length);
+				findPlants();
+				document.getElementById('numberOfPlantsDeleted').innerHTML = '<font color="red">' + pid.length + ' Plants Deleted</font><br>';
+			}
+		});
+	}
+
+	function initMap(longitude, latitude) {
+		latitude = parseFloat(latitude);
+		longitude = parseFloat(longitude);
+		var uluru = { lat: latitude, lng: longitude };
+		var map = new google.maps.Map(document.getElementById('plant_map'), {
+			zoom: 4,
+			center: uluru
+		});
+		var marker = new google.maps.Marker({
+			position: uluru,
+			map: map
+		});
+		google.maps.event.addListener(map, 'click', function (event) {
+			document.getElementById('plant_location_latitude').value = event.latLng.lat();
+			document.getElementById('plant_location_longitude').value = event.latLng.lng();
+			initMap(event.latLng.lng(), event.latLng.lat());
+		});
+	}
+
+	$(function () {
+		findPlants();
+	});
+
+	$('.blocks').click(function () {
+		$('.blocks').removeClass('highlighted');
+		$(this).addClass('highlighted');
+	});
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcHrb5zzxzP1KWBVRmR_jRGz9ZL9kWlN0&callback=initMap">
+</script> {% endblock %}

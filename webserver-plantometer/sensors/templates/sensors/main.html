@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        html,
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: "Raleway", sans-serif;
+        }
+
+        .dashboard-buttons {
+            /*do not removes this, since it is being used in jQuerying*/
+        }
+    </style>
+    {% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script> {% endblock %}
+</head>
+
+<body class="w3-light-grey">
+
+    <!-- Top container -->
+    {% block body %}
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">
+            <i class="fa fa-bars"></i>  Dashboard</button>
+        <span class="w3-bar-item w3-left">plantometer</span>
+
+        <a href="https://time.is/New_Delhi" id="time_is_link" rel="nofollow" style="font-size:20px; vertical-align: middle;"></a>
+        <span class="w3-bar-item w3-right" id="New_Delhi_z424" style="font-size:20px;"></span>
+    </div>
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+        <br>
+        <div class="w3-container w3-row">
+            <div class="w3-col s4">
+                <img src="../../static/sensors/images/avatar2.png" class="w3-circle w3-margin-right" style="width:46px">
+            </div>
+            <div class="w3-col s8 w3-bar">
+                <table>
+                    <tr>
+                        <td style="width: 200px; text-align: center;">
+                            <span>
+                                {% if 'name' in request.session %}
+                                <strong>
+                                    {{ request.session.name }}
+                                </strong>
+                                {% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 200px; text-align: center;">
+                            <div style="padding-left: 63px;">
+                                <a href="{% url 'sensors:logout' %}" class="w3-bar-item w3-button">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <div class="w3-container">
+            <h5>Dashboard</h5>
+        </div>
+        <div class="w3-bar-block">
+            <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu">
+                <i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+            <a href="#" onclick="overview();" class="w3-bar-item w3-button w3-padding w3-blue dashboard-buttons">
+                <i class="fa fa-users fa-fw"></i>  Overview</a>
+            <a href="#" onclick="detail();" class="w3-bar-item w3-button w3-padding dashboard-buttons">
+                <i class="fa fa-eye fa-fw"></i> Details</a>
+            <a href="#" onclick="gearth();" class="w3-bar-item w3-button w3-padding dashboard-buttons">
+                <i class="fa fa-globe fa-fw" aria-hidden="true"></i> Google Earth</a>
+            <a href="#" onclick="addplant();" class="w3-bar-item w3-button w3-padding dashboard-buttons">
+                <i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i> Add Plant</a>
+            <a href="#" onclick="settings();" class="w3-bar-item w3-button w3-padding dashboard-buttons">
+                <i class="fa fa-cogs fa-fw" aria-hidden="true"></i> Settings</a>
+        </div>
+    </nav>
+
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+        id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+            
+                    <object id="contentarea" style="height: 665px; width: 100%" type="text/html" data="/sensors/overview/"></object>
+        
+        {% block main %} {% endblock %}
+    </div>
+    {% endblock %} {% block script %}
+    <script>
+
+        var mySidebar = document.getElementById("mySidebar");
+        var overlayBg = document.getElementById("myOverlay");
+        function w3_open() {
+            if (mySidebar.style.display === 'block') {
+                mySidebar.style.display = 'none';
+                overlayBg.style.display = "none";
+            } else {
+                mySidebar.style.display = 'block';
+                overlayBg.style.display = "block";
+            }
+        }
+        function w3_close() {
+            mySidebar.style.display = "none";
+            overlayBg.style.display = "none";
+        }
+
+        function detail() {
+            document.getElementById("contentarea").setAttribute('data', "{% url 'sensors:detail' %}");
+        }
+        function overview() {
+            document.getElementById("contentarea").setAttribute('data', "{% url 'sensors:overview' %}");
+        }
+        function gearth() {
+            document.getElementById("contentarea").setAttribute('data', "{% url 'sensors:gearth' %}");
+        }
+        function addplant() {
+            document.getElementById("contentarea").setAttribute('data', "{% url 'users:addplant' %}");
+        }
+        function settings() {
+            document.getElementById("contentarea").setAttribute('data', "{% url 'users:settings' %}");
+        }
+        $(document).ready(function () {
+            $('.dashboard-buttons').click(function () {
+                $('.dashboard-buttons').removeClass('w3-blue');
+                $(this).addClass('w3-blue');
+            });
+        })
+    </script>
+    <script src="//widget.time.is/t.js"></script>
+    <script>
+            time_is_widget.init({ New_Delhi_z424: {} });
+    </script> {% endblock %}
+</body>
+
+</html>

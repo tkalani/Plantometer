@@ -1,0 +1,61 @@
+{% extends 'sensors/main.html' %} {% block head %}{% load staticfiles %}
+<style>
+</style>
+{% endblock %} {% block body %} {% block main %} {% block mydashboard %} {% endblock %}
+<div class="w3-row-padding w3-margin-bottom" style="margin-top:10px;">
+    <div class="w3-col s6">
+        <div class="w3-container w3-green w3-padding-16">
+            <h3 style="text-align: center;">Add your plant and choose its location</h3>
+            <h4 style="text-align: center;">Default Location: New Delhi</h4>
+        </div>
+    </div>
+    <div class="w3-col s6">
+        <div class="w3-container w3-padding-16 w3-border w3-border-green w3-bottombar w3-leftbar w3-rightbar w3-topbar">
+            <center>
+                <form name="myform1" role="form" action="{% url 'users:addplant' %}" method="post" class="register-form">
+                    {% csrf_token %}
+                    <input class="w3-input w3-border-0" type="text" required name="plantname" placeholder="Plant Name">
+                    <input type="hidden" name="latitude" id="lat" value="28.555576049185973">
+                    <input type="hidden" name="longitude" id="long" value="77.16796875">
+                    <button style="margin-top: 8px;" class="w3-button w3-green" type="submit">Add Plant</button>
+                </form>
+            </center>
+        </div>
+    </div>
+</div>
+<div class="w3-col s12">
+        <div class="w3-container w3-padding-16">
+            <div id="map" style="height: 470px; width: 100%"></div>
+        </div>
+    </div>
+{% endblock %} {% endblock %} {% block script %}
+<script>
+    function initMap() {
+        var uluru = { lat: 28.555576049185973, lng: 77.16796875 };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 4,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            alert('Plant Location Recorded');
+            document.getElementById('lat').value = event.latLng.lat();
+            document.getElementById('long').value = event.latLng.lng();
+        });
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcHrb5zzxzP1KWBVRmR_jRGz9ZL9kWlN0&callback=initMap">
+</script>
+
+</body>
+<!-- ###############  SCRIPTS  #######################   -->
+<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="{% static 'sensors/js/Rx.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+    crossorigin="anonymous"></script> {% endblock %}
